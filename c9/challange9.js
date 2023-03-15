@@ -37,6 +37,11 @@ console.log(matrix[1][4])
 console.log(matrix[2][4])
 console.log(matrix[3][4])
 console.log(matrix[4][4])
+console.log(matrix[4][1])
+console.log(matrix[4][2])
+console.log(matrix[4][3])
+console.log(matrix[4][4])
+
 
 
 
