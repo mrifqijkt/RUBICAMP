@@ -1,6 +1,9 @@
-if (process.argv[2]) {
+if (process.argv[2] !== 'data.json') {
+    console.log(`tolong sertakan nama file sebagai inputan soal misalnya 'node solution.js data.json'`);
+    process.exit();
+} else {
     const readline = require('readline');
-    const fs = require('fs');   
+    const fs = require('fs');
     const content = fs.readFileSync('data.json');
     const obj = JSON.parse(content);
 
@@ -45,40 +48,4 @@ if (process.argv[2]) {
     }
 
     tebakKata()
-} else {
-    console.log(`tolong sertakan nama file sebagai inputan soal misalnya 'node solution.js data.json'`);
-    process.exit();
 }
-
-
-
-
-
-
-
-
-// function tebakKata() {
-//     console.log('Selamat datang di permainan tebak kata, silahkan isi dengan jawaban yang benar ya! ');
-//     console.log(`Pertanyaan: ${obj[i].definition}`);
-//     rl.prompt();
-//     rl.on('line', function (answer) {
-//         if (answer.toLowerCase() == obj[i].term) {
-//             console.log('Jawaban anda benar')
-//             i++;
-
-//             if (i == obj.length) {
-//                 console.log('Selamat anda jadi Pemenang!!!');
-//                 process.exit();
-//             }cd
-//             console.log("Pertayaan: " + obj[i].definition);
-//             rl.prompt();
-//         }
-//         else { 
-//             console.log('Wkwkwkwk anda kurang beruntung');
-//             rl.prompt();
-//         }
-//     });
-
-// }
-
-// tebakKata()
