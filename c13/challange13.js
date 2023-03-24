@@ -1,32 +1,35 @@
-const readline = require('readline');
-const fs = require('fs');
+//  const fs = require('fs');
+//  const process = require('process');
+
+//  const data = fs.readFileSync('data.json');
+//  const taskData = JSON.parse(data);
+
+ function addTask (){
+     taskData.push({"task_id":null,"task_content":content,"status":false,"tag":[]})
+     
+     fs.writeFileSync(`data.json`,JSON.stringify(taskData, null,content,false,[]))
+ }
 
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
+ console.log(`>>> JS TODO <<<
+ $ node todo.js list
+ $ node todo.js <command>
+ $ node todo.js task <task_id>
+ $ node todo.js add <task_content>
+ $ node todo.js delete <task_id>
+ $ node todo.js <task_id>
+ $ node todo.js uncomplete <task_id>
+ $ node todo.js list:outstanding asc|desc
+ $ node todo.js list:completed asc|desc
+ $ node todo.js tag <task_id> <tag_name_1> <tag_name_2> ... <tag_name_N>
+ $ node todo.js filter:<tag_name>`)
 
+//  switch (command) {
+//      case "list":
+//          console.log("Daftar Pekerjaan")
+//          break;
 
-});
-switch (command) {
-    case value:
-        
-        break;
+//      default:
+//          break;
+//  }
 
-    default:
-        console.log(">>> JS TODO <<<");
-        console.log("$ node todo.js list");
-        console.log("$ node todo.js <command>");
-        console.log("$ node todo.js task <task_id>");
-        console.log("$ node todo.js add <task_content>");
-        console.log("$ node todo.js delete <task_id>");
-        console.log("$ node todo.js <task_id>");
-        console.log("$ node todo.js uncomplete <task_id>");
-        console.log("$ node todo.js list:outstanding asc|desc");
-        console.log("$ node todo.js list:completed asc|desc");
-        console.log("$ node todo.js tag <task_id> <tag_name_1> <tag_name_2> ... <tag_name_N>")
-        console.log("$ node todo.js filter:<tag_name>");
-        break;
-}
-
-        
