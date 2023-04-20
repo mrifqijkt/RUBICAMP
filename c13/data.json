@@ -1,3 +1,14 @@
 [
-
+    {
+        "task_id": 2,
+        "task_content": "saya akan memasak",
+        "status": true,
+        "tag": []
+    },
+    {
+        "task_id": 2,
+        "task_content": "saya pergi ke sekolah",
+        "status": false,
+        "tag": []
+    }
 ]
