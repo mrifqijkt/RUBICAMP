@@ -48,4 +48,4 @@ if (process.argv[2] !== 'data.json') {
     }
 
     tebakKata()
-}
+};

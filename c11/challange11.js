@@ -1,5 +1,4 @@
 const readline = require('readline');
-
 const fs = require('fs');
 const content = fs.readFileSync('data.json');
 const obj = JSON.parse(content);
@@ -23,11 +22,11 @@ function tebakKata() {
             if (i == obj.length) {
                 console.log('Selamat anda jadi Pemenang!!!');
                 process.exit();
-            }
+            }cd
             console.log("Pertayaan: " + obj[i].definition);
             rl.prompt();
         }
-        else {
+        else { 
             console.log('Wkwkwkwk anda kurang beruntung');
             rl.prompt();
         }
