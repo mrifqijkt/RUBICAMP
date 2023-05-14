@@ -24,11 +24,12 @@ IDDOSEN(PK)    namadosen
 D133           rubi henjaya
 
 --matakuliah
-IDMATAKULIAH(PK)    namamatakuliah    sks 
-T144                seni              9
-T155                musik             9
-T166                budaya            11
-T177                sains             13
+IDMATAKULIAH(PK)    namamatakuliah        sks 
+T144                Kesenian              9
+T155                musik                 9
+T166                budaya                11
+T177                sains                 13
+T188                Data Maining          9
 
 CREATE TABLE mahasiswa(
     nim CHARACTER(4)PRIMARY KEY NOT NULL,
@@ -94,8 +95,18 @@ VALUES(1,"M001","D133","T144","C"),
 (3,"M003","D133","T166","A"),
 (4,"M004","D133","T177","A");
 
+-- soal 1
 SELECT nim,nama,alamat,jurusan,umur FROM mahasiswa WHERE mahasiswa.umur < 20; 
 
+-- soal2
 SELECT * FROM mahasiswa INNER JOIN mengikuti on mahasiswa.nim = mengikuti.nim;
 
+-- soal 3
 SELECT nama,matakuliah.namamatakuliah,NILAI FROM mahasiswa INNER JOIN mengikuti ON mahasiswa.nim = mengikuti.nim INNER JOIN matakuliah ON mengikuti.IDMATAKULIAH = matakuliah.IDMATAKULIAH WHERE mengikuti.NILAI = "A" OR "B";
+
+-- soal 4
+SELECT mahasiswa.*,(matakuliah.sks) AS total_sks FROM mahasiswa INNER JOIN mengikuti ON mengikuti.nim = mahasiswa.nim INNER JOIN matakuliah ON mengikuti.IDMATAKULIAH = matakuliah.IDMATAKULIAH GROUP BY mahasiswa.nim HAVING SUM (total_sks) < 10;
+
+-- soal 5
+INSERT INTO matakuliah(IDMATAKULIAH,namamatakuliah,sks) VALUES ("T188","Data Maining","9");
+
