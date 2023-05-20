@@ -5,7 +5,6 @@
    let text = [];
 
    for (let i = 0; i < kalimat.length; i++) {
-    //console.log(kalimat)
 
     if  (kalimat[i].charAt(0) == vokal[0]) {
       text.push(kalimat[i])
