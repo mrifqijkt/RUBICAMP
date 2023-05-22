@@ -35,3 +35,4 @@ function tebakKata() {
 }
 
 tebakKata()
+//tebaktebakan
