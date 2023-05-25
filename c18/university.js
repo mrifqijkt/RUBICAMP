@@ -257,3 +257,5 @@ function daftarJurusan(next) {
 }
 
 welcome()
+
+// welcieoe()
