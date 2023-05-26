@@ -60,7 +60,7 @@ silahkan pilih opsi di  bawah ini :
 [2] Jurusan
 [3] Dosen
 [4] Mata Kuliah
-[5] Kontrak
+[5] Mengikuti
 [6] Keluar
     `)
     line()
@@ -161,12 +161,12 @@ function daftarMengikuti(next) {
             return console.log('ambil data mengikuti gagal')
         }
         let table = new Table({
-            head: ['nom','nim','IDDOSEN','IDMATAKULIAH','NILAI'],
-            colWidths: [10, 10, 10, 10, 10]
+            head: ['nom', 'nim', 'nama', 'namamatakuliah', 'namadosen', 'NILAI'],
+            colWidths: [10, 10, 10, 20, 20, 10]
         });
         rows.forEach((mengikuti) => {
             table.push(
-                [mengikuti.nom,mengikuti.nim,mengikuti.IDDOSEN,mengikuti.IDMATAKULIAH,mengikuti.NILAI]
+                [mengikuti.nom, mengikuti.nim, mengikuti.nama, mengikuti.namamatakuliah, mengikuti.namadosen, mengikuti.NILAI]
             );
         })
         console.log(table.toString());
@@ -176,44 +176,31 @@ function daftarMengikuti(next) {
 }
 
 function cariMengikuti(next) {
-    rl.question('masukan NIM Mengikuti :', (nim) => {
-        db.all('SELECT * FROM mengikuti WHERE nom = ?', [nim], (err, rows) => {
-            if (err)
-                return console.log('cari data mengikuti gagal')
+    daftarMengikuti(() => {
 
-            if (rows.length == 0) {
-                console.log(`nama mengikuti dengan NIM Mengikuti ${nim} tidak terdaftar`)
+        rl.question('masukan nim mahasiswa :', (nim) => {
+            db.all('SELECT * FROM mengikuti WHERE nim = ?', [nim], (err, rows) => {
+                if (err)
+                    return console.log('cari data mengikuti gagal')
 
-            } else {
-                console.log(`
-detail nama mengikuti dengan NIM Mengikuti '${nim}' :
-NIM     : ${rows[0].nim} `)
+                if (rows.length == 0) {
+                    console.log(`mengikutmi dengan nim ${nim}tidak terdaftar`)
 
-            }
-            line()
-            next()
+                } else {
+                    console.log(`
+daftar mengikuti mahasiswa dengan nim '${nim}' adalah : 
+nim     : ${rows[0].nim}
+nama    : ${rows[0].nama}  `)
+
+                }
+                line()
+                next()
+            })
         })
     })
 }
 
-// function daftarMengikuti(next) {
-//     db.all('SELECT * FROM mengikuti', (err, rows) => {
-//         if (err) {
-//             return console.log('ambil data mengikuti gagal')
-//         }
-//         let table = new Table({
-//             head: ['nom','nim','IDDOSEN','IDMATAKULIAH','NILAI'],
-//             colWidths: [10, 10, 10, 10, 10]
-//         });
-//         rows.forEach((mengikuti) => {
-//             table.push(
-//                 [mengikuti.nom,mengikuti.nim,mengikuti.IDDOSEN,mengikuti.IDMATAKULIAH,mengikuti.NILAI]
-//             );
-//         })
-//         console.log(table.toString());
-
-//         next()
-//     })
-// }
-
 welcome()
+
+
+//welcm()

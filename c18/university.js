@@ -146,27 +146,25 @@ siliahkan pilih opsi di bawah ini :
     })
 }
 
-
 function daftarMahasiswa(next) {
-    const sql = `SELECT mahasiswa.nim,mahasiswa.nama,mahasiswa.tanggalLahir,mahasiswa.alamat,mahasiswa.IDJURUSAN,jurusan.namajurusan FROM mahasiswa JOIN jurusan ON jurusan.IDJURUSAN = mahasiswa.IDJURUSAN`
-    db.all(sql, (err, rows) => {
-        console.log(rows)
-        if (err) {
-            return console.log('ambil data mahasiswa gagal')
-        }
-        let table = new Table({
-            head: ['nim', 'nama','tanggalLahir', 'alamat','kodejurusan','namajurusan' ],
-            
-        });
-        rows.forEach((mahasiswa) => {
-            table.push(
-                [mahasiswa.nim, mahasiswa.nama,mahasiswa.tanggalLahir,mahasiswa.alamat,mahasiswa.IDJURUSAN,mahasiswa.namajurusan]
-            );
-        })
-        console.log(table.toString());
+    db.all('SELECT mahasiswa.nim,mahasiswa.nama,mahasiswa.tanggalLahir,mahasiswa.alamat,mahasiswa.IDJURUSAN,jurusan.namajurusan FROM mahasiswa JOIN jurusan ON jurusan.IDJURUSAN = mahasiswa.IDJURUSAN',
+        (err, rows) => {
+            if (err) {
+                return console.log('ambil data mahasiswa gagal')
+            }
+            let table = new Table({
+                head: ['nim', 'nama', 'tanggalLahir', 'alamat', 'IDJURUSAN', 'namajurusan'],
 
-        next()
-    })
+            });
+            rows.forEach((mahasiswa) => {
+                table.push(
+                    [mahasiswa.nim, mahasiswa.nama, mahasiswa.tanggalLahir, mahasiswa.alamat, mahasiswa.IDJURUSAN, mahasiswa.namajurusan]
+                );
+            })
+            console.log(table.toString());
+
+            next()
+        })
 }
 
 
@@ -197,13 +195,15 @@ function tambahMahasiswa(next) {
     daftarMahasiswa(() => {
         rl.question('NIM : ', nim => {
             rl.question('Nama : ', nama => {
-                rl.question('Umur : ', umur => {
+                rl.question('Tanggal Lahir : ', tanggalLahir => {
                     rl.question('Alamat : ', alamat => {
+
 
                         daftarJurusan(() => {
                             rl.question('IDJURUSAN ; ', IDJURUSAN => {
-                                db.run('INSERT INTO mahasiswa(nim,nama,umur,alamat,IDJURUSAN)VALUES (?,?,?,?,?)',
-                                    [nim, nama, umur, alamat, IDJURUSAN],
+
+                                db.run('INSERT INTO mahasiswa(nim,nama,tanggalLahir,alamat,IDJURUSAN)VALUES (?,?,?,?,?)',
+                                    [nim, nama, tanggalLahir, alamat, IDJURUSAN],
                                     err => {
                                         if (err)
                                             return console.log('tambah data mahasiswa gagal')
@@ -212,11 +212,12 @@ function tambahMahasiswa(next) {
                                         daftarMahasiswa(() => {
                                             next()
                                         })
-
                                     })
                             })
+
                         })
                     })
+
                 })
             })
         })
@@ -228,7 +229,7 @@ function hapusMahasiswa(next) {
         db.run('DELETE FROM mahasiswa WHERE nim = ?', [nim], err => {
             if (err)
                 return console.log('hapus data mahasiswa gagal')
-            console.log(`data mahasiswa '${nim}',telah dihapus`)
+            console.log(`data mahasiswa '${nim}', telah dihapus`)
             next()
 
 
