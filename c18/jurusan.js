@@ -176,7 +176,7 @@ function cariJurusan(next) {
                 return console.log('cari data jurusan gagal')
 
             if (rows.length == 0) {
-                console.log(`nama jurusan dengan ID Jurusan ${IDJURUSAN}tidak terdaftar`)
+                console.log(`nama jurusan dengan ID Jurusan ${IDJURUSAN} tidak terdaftar`)
 
             } else {
                 console.log(`

@@ -1,6 +1,7 @@
 import readline from "readline";
 import sqlite3 from "sqlite3";
 
+
 const db = new sqlite3.Database('university.db')
 
 const rl = readline.createInterface({
@@ -156,17 +157,17 @@ silahkan pilih opsi di bawah ini :
 import Table from 'cli-table';
 
 function daftarMengikuti(next) {
-    db.all('SELECT * FROM mengikuti', (err, rows) => {
+    db.all('SELECT mengikuti.nom,mengikuti.nim,mahasiswa.nama,matakuliah.namamatakuliah,dosen.namadosen,mengikuti.NILAI FROM mengikuti JOIN mahasiswa ON mengikuti.nim = mahasiswa.nim JOIN matakuliah ON mengikuti.IDMATAKULIAH = matakuliah.IDMATAKULIAH JOIN dosen ON mengikuti.IDDOSEN = dosen.IDDOSEN ', (err, rows) => {
         if (err) {
             return console.log('ambil data mengikuti gagal')
         }
         let table = new Table({
-            head: ['nom', 'nim', 'nama', 'namamatakuliah', 'namadosen', 'NILAI'],
-            colWidths: [10, 10, 10, 20, 20, 10]
+            head: ['Nom', 'Nim','Nama', 'Matakuliah','Dosen', 'NILAI'],
+            colWidths: [10, 10, 10, 10, 10 ,10]
         });
         rows.forEach((mengikuti) => {
             table.push(
-                [mengikuti.nom, mengikuti.nim, mengikuti.nama, mengikuti.namamatakuliah, mengikuti.namadosen, mengikuti.NILAI]
+                [mengikuti.nom, mengikuti.nim,mengikuti.nama, mengikuti.namamatakuliah,mengikuti.namadosen, mengikuti.NILAI]
             );
         })
         console.log(table.toString());
@@ -176,10 +177,12 @@ function daftarMengikuti(next) {
 }
 
 function cariMengikuti(next) {
-    daftarMengikuti(() => {
+
+    daftarMahasiswa(() => {
 
         rl.question('masukan nim mahasiswa :', (nim) => {
-            db.all('SELECT * FROM mengikuti WHERE nim = ?', [nim], (err, rows) => {
+            db.all(' SELECT nom.mengikuti,mengikuti.nim,mahasiswa.nama,matakuliah.namamatakuliah,dosen.namadosen,mengikuti.NILAI FROM mengikuti JOIN mahasiswa ON mengikuti.nim = mahasiswa.nim JOIN matakuliah ON mengikuti.IDMATAKULIAH = matakuliah.IDMATAKULIAH JOIN dosen ON mengikuti.IDDOSEN = dosen.IDDOSEN = ?',
+             [nim], (err, rows) => {
                 if (err)
                     return console.log('cari data mengikuti gagal')
 
@@ -189,8 +192,17 @@ function cariMengikuti(next) {
                 } else {
                     console.log(`
 daftar mengikuti mahasiswa dengan nim '${nim}' adalah : 
-nim     : ${rows[0].nim}
-nama    : ${rows[0].nama}  `)
+`)
+                      table = new Table({
+                        head: ['Nom','NIM','ID Matakuliah','ID Dosen','NILAI'],
+                        colWidths:[10,10,10,10,10]
+                    })
+                    rows.forEach((mengikuti) => {
+                        table.push(
+                            [mengikuti.nom,mengikuti.nim,mengikuti.IDMATAKULIAH,mengikuti.IDDOSEN,mengikuti.NILAI]
+                        );
+                    })                    
+                    console.log(table.toString());
 
                 }
                 line()

@@ -175,7 +175,7 @@ function cariMatakuliah(next) {
                 return console.log('cari data matakuliah gagal')
 
             if (rows.length == 0) {
-                console.log(`nama matakuliah dengan ID Matakuliah ${IDMATAKULIAH}tidak terdaftar`)
+                console.log(`nama matakuliah dengan ID Matakuliah ${IDMATAKULIAH} tidak terdaftar`)
 
             } else {
                 console.log(`

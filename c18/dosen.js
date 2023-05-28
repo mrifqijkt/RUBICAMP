@@ -175,7 +175,7 @@ function cariDosen(next) {
                 return console.log('cari data dosen gagal')
 
             if (rows.length == 0) {
-                console.log(`nama dosen dengan ID Dosen ${IDDOSEN}tidak terdaftar`)
+                console.log(`nama dosen dengan ID Dosen ${IDDOSEN} tidak terdaftar`)
 
             } else {
                 console.log(`
