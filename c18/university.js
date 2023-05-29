@@ -1,6 +1,6 @@
 import readline from "readline";
 import sqlite3 from "sqlite3";
-import Table from 'cli-table';
+import Table from 'cli-table3';
 
 const db = new sqlite3.Database('university.db')
 
@@ -30,7 +30,7 @@ function username() {
         db.all('SELECT * FROM users WHERE username = ?', [answer], (err, rows) => {
             if (err) throw err
             if (rows.length == 0) {
-                console.log('username not found')
+                console.log('username salah')
                 username()
             } else {
                 password(rows[0])
@@ -167,7 +167,6 @@ function daftarMahasiswa(next) {
         })
 }
 
-
 function cariMahasiswa(next) {
     rl.question('masukan nim mahasiswa :', (nim) => {
         db.all('SELECT * FROM mahasiswa WHERE nim = ?', [nim], (err, rows) => {
@@ -191,7 +190,7 @@ nama    : ${rows[0].nama}  `)
 }
 
 function tambahMahasiswa(next) {
-    console.log('lengkapi data di bawah ini')
+    console.log('lengkapi data di bawah ini :')
     daftarMahasiswa(() => {
         rl.question('NIM : ', nim => {
             rl.question('Nama : ', nama => {
@@ -237,13 +236,7 @@ function hapusMahasiswa(next) {
     })
 }
 
-
-
-
 // JURUSAN
-
-
-
 
 function menuJurusan() {
     console.log(`
@@ -340,14 +333,14 @@ Nama Jurusan    : ${rows[0].namajurusan}  `)
 }
 
 function tambahJurusan(next) {
-    console.log('lengkapi data di bawah ini')
+    console.log('lengkapi data di bawah ini :')
     daftarJurusan(() => {
         rl.question('ID Jurusan : ', IDJURUSAN => {
 
             daftarJurusan(() => {
                 rl.question('Nama Jurusan ; ', namajurusan => {
                     db.run('INSERT INTO jurusan(IDJURUSAN,namajurusan)VALUES (?,?)',
-                        [IDJURUSAN,namajurusan],
+                        [IDJURUSAN, namajurusan],
                         err => {
                             if (err)
                                 return console.log('tambah data jurusan gagal')
@@ -429,7 +422,6 @@ silahkan pilih opsi di bawah ini :
     })
 }
 
-
 function daftarDosen(next) {
     db.all('SELECT * FROM dosen', (err, rows) => {
         if (err) {
@@ -473,7 +465,7 @@ Nama Dosen    : ${rows[0].namadosen}  `)
 }
 
 function tambahDosen(next) {
-    console.log('lengkapi data di bawah ini')
+    console.log('lengkapi data di bawah ini :')
     daftarDosen(() => {
         rl.question('ID Dosen : ', IDDOSEN => {
 
@@ -562,7 +554,6 @@ silahkan pilih opsi di bawah ini :
     })
 }
 
-
 function daftarMatakuliah(next) {
     db.all('SELECT * FROM matakuliah', (err, rows) => {
         if (err) {
@@ -606,7 +597,7 @@ Nama Matakuliah    : ${rows[0].namamatakuliah}  `)
 }
 
 function tambahMatakuliah(next) {
-    console.log('lengkapi data di bawah ini')
+    console.log('lengkapi data di bawah ini :')
     daftarMatakuliah(() => {
         rl.question('ID Matakuliah : ', IDMATAKULIAH => {
             rl.question('nilai sks : ', sks => {
@@ -706,13 +697,14 @@ silahkan pilih opsi di bawah ini :
 
 
 function daftarMengikuti(next) {
-    db.all('SELECT mengikuti.nom,mengikuti.nim,mahasiswa.nama,matakuliah.namamatakuliah,dosen.namadosen,mengikuti.NILAI FROM mengikuti JOIN mahasiswa ON mengikuti.nim = mahasiswa.nim JOIN matakuliah ON mengikuti.IDMATAKULIAH = matakuliah.IDMATAKULIAH JOIN dosen ON mengikuti.IDDOSEN = dosen.IDDOSEN ', (err, rows) => {
+
+    db.all('SELECT mengikuti.nom,mengikuti.nim,mahasiswa.nama,matakuliah.namamatakuliah,dosen.namadosen,mengikuti.NILAI FROM mengikuti JOIN mahasiswa ON mengikuti.nim = mahasiswa.nim JOIN matakuliah ON mengikuti.IDMATAKULIAH = matakuliah.IDMATAKULIAH JOIN dosen ON mengikuti.IDDOSEN = dosen.IDDOSEN', (err, rows) => {
+
         if (err) {
             return console.log('ambil data mengikuti gagal')
         }
         let table = new Table({
-            head: ['Nom', 'Nim', 'Nama', 'Matakuliah', 'Dosen', 'NILAI'],
-            colWidths: [10, 10, 10, 10, 10, 10]
+            head: ['ID', 'NIM', 'NAMA', 'MATAKULIAH', 'NAMA DOSEN', 'NILAI'],
         });
         rows.forEach((mengikuti) => {
             table.push(
@@ -720,45 +712,142 @@ function daftarMengikuti(next) {
             );
         })
         console.log(table.toString());
-
         next()
     })
 }
 
 function cariMengikuti(next) {
 
-daftarMahasiswa(()=>{
+    daftarMahasiswa(() => {
 
-    rl.question('masukan nim mahasiswa :', (nim) => {
-        db.all(' SELECT * FROM mengikuti WHERE nim =? ',
-            [nim], (err, rows) => {
-                if (err)
-                    return console.log('cari data mengikuti gagal')
+        rl.question('masukan nim mahasiswa :', (nim) => {
+            db.all(' SELECT * FROM mengikuti WHERE nim =? ',
+                [nim], (err, rows) => {
+                    if (err)
+                        return console.log('cari data mengikuti gagal')
 
-                if (rows.length == 0) {
-                    console.log(`mengikuti dengan nim ${nim} tidak terdaftar`)
+                    if (rows.length == 0) {
+                        console.log(`mengikuti dengan nim ${nim} tidak terdaftar`)
 
-                } else {
-                    console.log(`
+                    } else {
+                        console.log(`
 daftar mengikuti mahasiswa dengan nim '${nim}' adalah : 
 `)
-                    let table = new Table({
-                        head: ['Nom', 'Nim', 'ID Dosen', 'ID Matakuliah', 'NILAI'],
-                        colWidths: [10, 10, 10, 10, 10]
-                    })
-                    rows.forEach((mengikuti) => {
-                        table.push(
-                            [mengikuti.nom, mengikuti.nim, mengikuti.IDDOSEN, mengikuti.IDMATAKULIAH, mengikuti.NILAI]
-                        );
-                    })
-                    console.log(table.toString());
+                        let table = new Table({
+                            head: ['Nom', 'Nim', 'ID Dosen', 'ID Matakuliah', 'NILAI'],
+                            colWidths: [10, 10, 10, 10, 10]
+                        })
+                        rows.forEach((mengikuti) => {
+                            table.push(
+                                [mengikuti.nom, mengikuti.nim, mengikuti.IDDOSEN, mengikuti.IDMATAKULIAH, mengikuti.NILAI]
+                            );
+                        })
+                        console.log(table.toString());
 
-                }
-                line()
-                next()
+                    }
+                    line()
+                    next()
+                })
+        })
+
+    })
+}
+
+function tambahMengikuti(next) {
+    console.log('lengkapi data di bawah ini :')
+
+    daftarMahasiswa(() => {
+        rl.question('Masukkan NIM : ', nim => {
+
+            daftarMatakuliah(() => {
+                rl.question('Masukkan ID Matakuliah : ', IDMATAKULIAH => {
+
+                    daftarDosen(() => {
+                        rl.question('Masukkan ID Dosen : ', IDDOSEN => {
+
+
+                            db.run('INSERT INTO mengikuti(nim,IDDOSEN,IDMATAKULIAH)VALUES (?,?,?)',
+                                [nim, IDDOSEN, IDMATAKULIAH],
+                                err => {
+                                    if (err)
+                                        return console.log('tambah data mengikuti gagal')
+                                    console.log('mengikuti telah di tambahkan')
+
+                                    daftarMengikuti(() => {
+                                        next()
+                                    })
+                                })
+                        })
+                    })
+                })
             })
         })
 
+    })
+}
+
+function hapusMengikuti(next) {
+    rl.question('Masukan Nom Mengikuti : ', nom => {
+        db.run('DELETE FROM mengikuti WHERE nom = ?', [nom], err => {
+            if (err)
+                return console.log('hapus data mengikuti gagal')
+            console.log(`data mengikuti '${nom}',telah dihapus`)
+            next()
+
+
+        })
+    })
+}
+
+function detailNilai(next) {
+    db.all('SELECT mengikuti.nom,matakuliah.namamatakuliah,mengikuti.NILAI FROM mengikuti JOIN matakuliah ON mengikuti.IDMATAKULIAH = matakuliah.IDMATAKULIAH ; ',(err, rows)=>{
+        if(err){
+            return console.log('Ambil data mengikuti gagal')
+        }
+
+        let table = new Table ({
+            head:['Nom','namamatakuliah','NILAI']
+
+        })
+        rows.forEach((mengikuti)=>{
+            table.push(
+                [mengikuti.nom,mengikuti.namamatakuliah,mengikuti.NILAI]
+            );
+        })
+        console.log(table.toString());
+        next()
+    })
+    
+}
+
+function updateNilai(next) {
+    daftarMengikuti(() => {
+        rl.question('Masukkan Nim Mahasiswa :', nim => {
+            line()
+
+            console.log(`Detail Mahasiswa Dengan Nim '${nim}' : `)
+            detailNilai(() => {
+
+                rl.question('Masukkan Nom Mengikuti yang akan di rubah : ', nom => {
+                    rl.question('Tulis Nilai Baru : ', NILAI => {
+
+                        db.run('UPDATE mengikuti SET NILAI = ? WHERE nom = ?',
+                            [NILAI,nom],
+                            err => {
+                                if (err)
+                                    return console.log('Tambah mengikuti gagal')
+
+                                console.log('mengikuti telah ditambahkan')
+
+                                daftarMengikuti(() => {
+                                    next()
+                                })
+                            }
+                        )
+                    })
+                })
+            })
+        })
     })
 }
 

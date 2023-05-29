@@ -178,7 +178,7 @@ function daftarMengikuti(next) {
 
 function cariMengikuti(next) {
 
-    daftarMahasiswa(() => {
+    daftarM(() => {
 
         rl.question('masukan nim mahasiswa :', (nim) => {
             db.all(' SELECT nom.mengikuti,mengikuti.nim,mahasiswa.nama,matakuliah.namamatakuliah,dosen.namadosen,mengikuti.NILAI FROM mengikuti JOIN mahasiswa ON mengikuti.nim = mahasiswa.nim JOIN matakuliah ON mengikuti.IDMATAKULIAH = matakuliah.IDMATAKULIAH JOIN dosen ON mengikuti.IDDOSEN = dosen.IDDOSEN = ?',
