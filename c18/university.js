@@ -1,316 +1,14 @@
-import readline from "readline";
-import sqlite3 from "sqlite3";
-import Table from 'cli-table3';
 
-const db = new sqlite3.Database('university.db')
+import UserController from "./controllers/user.js"
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
+UserController.welcome()
 
-const user = {
-    'rifqi': '1234'
-}
-
-function line() {
-    console.log('====================================================')
-};
-
-function welcome() {
-    line()
-    console.log('Welcome to Universitas Indonesia')
-    console.log('Jl.Jakarta Raya no.15')
-    line()
-    username()
-}
-
-function username() {
-    rl.question('username: ', answer => {
-        db.all('SELECT * FROM users WHERE username = ?', [answer], (err, rows) => {
-            if (err) throw err
-            if (rows.length == 0) {
-                console.log('username salah')
-                username()
-            } else {
-                password(rows[0])
-            }
-        })
-    })
-}
-
-function password(user) {
-    rl.question('password; ', answer => {
-        if (user.password === answer) {
-            line()
-            console.log(`welcome ${user.username}. Your acces level is : ADMIN `)
-            line()
-            menuUtama()
-        } else {
-            console.log('password salah')
-            password(user)
-        }
-    })
-
-}
-
-function menuUtama() {
-    console.log(`
-silahkan pilih opsi di  bawah ini :
-[1] Mahasiswa
-[2] Jurusan
-[3] Dosen
-[4] MataKuliah
-[5] Mengikuti
-[6] Keluar
-    `)
-    line()
-    rl.question('masukan salah satu no dari opsi di atas: ', answer => {
-        switch (answer) {
-            case '1':
-                menuMahasiswa()
-                break;
-
-            case '2':
-                menuJurusan()
-                break;
-
-            case '3':
-                menuDosen()
-                break;
-
-            case '4':
-                menuMatakuliah()
-                break;
-
-            case '5':
-                menuMengikuti()
-                break;
-
-            case '6':
-                process.exit(0)
-                break;
-
-            default:
-                break;
-        }
-    })
-}
-
-function menuMahasiswa() {
-    console.log(`
-siliahkan pilih opsi di bawah ini :
-[1] Daftar Mahasiswa
-[2] Cari Mahasiswa
-[3] Tambah Mahasiswa
-[4] Hapus Mahasiswa
-[5] Kembali
-    `)
-    line()
-    rl.question('masukkan salah satu no. dari opsi di atas: ', answer => {
-        switch (answer) {
-            case '1':
-                daftarMahasiswa(() => {
-                    menuMahasiswa()
-                })
-                break;
-
-            case '2':
-                cariMahasiswa(() => {
-                    menuMahasiswa()
-                })
-                break;
-
-            case '3':
-                tambahMahasiswa(() => {
-                    menuMahasiswa()
-                })
-                break;
-
-            case '4':
-                hapusMahasiswa(() => {
-                    menuMahasiswa()
-                })
-                break;
-
-            case '5':
-                menuUtama()
-                break;
-
-            default:
-                console.log('opsi yang dimasukkan salah')
-                menuMahasiswa()
-                break;
-
-        }
-    })
-}
-
-function daftarMahasiswa(next) {
-    db.all('SELECT mahasiswa.nim,mahasiswa.nama,mahasiswa.tanggalLahir,mahasiswa.alamat,mahasiswa.IDJURUSAN,jurusan.namajurusan FROM mahasiswa JOIN jurusan ON jurusan.IDJURUSAN = mahasiswa.IDJURUSAN',
-        (err, rows) => {
-            if (err) {
-                return console.log('ambil data mahasiswa gagal')
-            }
-            let table = new Table({
-                head: ['nim', 'nama', 'tanggalLahir', 'alamat', 'IDJURUSAN', 'namajurusan'],
-
-            });
-            rows.forEach((mahasiswa) => {
-                table.push(
-                    [mahasiswa.nim, mahasiswa.nama, mahasiswa.tanggalLahir, mahasiswa.alamat, mahasiswa.IDJURUSAN, mahasiswa.namajurusan]
-                );
-            })
-            console.log(table.toString());
-
-            next()
-        })
-}
-
-function cariMahasiswa(next) {
-    rl.question('masukan nim mahasiswa :', (nim) => {
-        db.all('SELECT * FROM mahasiswa WHERE nim = ?', [nim], (err, rows) => {
-            if (err)
-                return console.log('cari data mahasiswa gagal')
-
-            if (rows.length == 0) {
-                console.log(`mahasiswa dengan nim ${nim} tidak terdaftar`)
-
-            } else {
-                console.log(`
-detail mahasiswa dengan nim '${nim}' : 
-Nim        : ${rows[0].nim}
-Nama       : ${rows[0].nama}
-Alamat     : ${rows[0].alamat}
-ID Jurusan : ${rows[0].IDJURUSAN}`)
-
-            }
-            line()
-            next()
-        })
-    })
-}
-
-function tambahMahasiswa(next) {
-    console.log('lengkapi data di bawah ini :')
-    daftarMahasiswa(() => {
-        rl.question('NIM : ', nim => {
-            rl.question('Nama : ', nama => {
-                rl.question('Tanggal Lahir : ', tanggalLahir => {
-                    rl.question('Alamat : ', alamat => {
+// MAHASISWA
 
 
-                        daftarJurusan(() => {
-                            rl.question('IDJURUSAN ; ', IDJURUSAN => {
-
-                                db.run('INSERT INTO mahasiswa(nim,nama,tanggalLahir,alamat,IDJURUSAN)VALUES (?,?,?,?,?)',
-                                    [nim, nama, tanggalLahir, alamat, IDJURUSAN],
-                                    err => {
-                                        if (err)
-                                            return console.log('tambah data mahasiswa gagal')
-
-                                        console.log('mahasiswa telah di tambahkan')
-                                        daftarMahasiswa(() => {
-                                            next()
-                                        })
-                                    })
-                            })
-
-                        })
-                    })
-
-                })
-            })
-        })
-    })
-}
-
-function hapusMahasiswa(next) {
-    rl.question('Masukan NIM mahasiswa : ', nim => {
-        db.run('DELETE FROM mahasiswa WHERE nim = ?', [nim], err => {
-            if (err)
-                return console.log('hapus data mahasiswa gagal')
-            console.log(`data mahasiswa '${nim}', telah dihapus`)
-            next()
-
-
-        })
-    })
-}
 
 // JURUSAN
 
-function menuJurusan() {
-    console.log(`
-silahkan pilih opsi di bawah ini :
-[1] Daftar Jurusan
-[2] Cari Jurusan
-[3] Tambah Jurusan
-[4] Hapus Jurusan
-[5] Kembali
-    `)
-    line()
-    rl.question('masukkan salah satu no dari opsi di atas: ', answer => {
-        switch (answer) {
-            case '1':
-                daftarJurusan(() => {
-                    menuJurusan()
-                })
-                break;
-
-            case '2':
-                cariJurusan(() => {
-                    menuJurusan()
-                })
-                break;
-
-            case '3':
-                tambahJurusan(() => {
-                    menuJurusan()
-                })
-                break;
-
-            case '4':
-                hapusJurusan(() => {
-                    menuJurusan()
-                })
-                break;
-
-            case '5':
-                menuUtama()
-                break;
-
-            default:
-                console.log('opsi yang dimasukkan salah')
-                menuJurusan()
-                break;
-
-
-        }
-    })
-}
-
-
-
-function daftarJurusan(next) {
-    db.all('SELECT IDJURUSAN,namajurusan FROM jurusan', (err, rows) => {
-        if (err) {
-            return console.log('ambil data jurusan gagal')
-        }
-        let table = new Table({
-            head: ['IDJURUSAN', 'namajurusan'],
-            colWidths: [20, 20]
-        });
-        rows.forEach((jurusan) => {
-            table.push(
-                [jurusan.IDJURUSAN, jurusan.namajurusan]
-            );
-        })
-        console.log(table.toString());
-
-        next()
-    })
-}
 
 function cariJurusan(next) {
     rl.question('masukan ID Jurusan :', (IDJURUSAN) => {
@@ -324,7 +22,7 @@ function cariJurusan(next) {
             } else {
                 console.log(`
 detail nama jurusan dengan IDJURUSAN '${IDJURUSAN}' : 
-ID Jurusan     : ${rows[0].IDJURUSAN}
+ID Jurusan      : ${rows[0].IDJURUSAN}
 Nama Jurusan    : ${rows[0].namajurusan}  `)
 
             }
@@ -362,8 +60,6 @@ function hapusJurusan(next) {
                 return console.log('hapus data jurusan gagal')
             console.log(`data jurusan '${IDJURUSAN}',telah dihapus`)
             next()
-
-
         })
     })
 }
@@ -414,8 +110,6 @@ silahkan pilih opsi di bawah ini :
                 console.log('opsi yang dimasukkan salah')
                 menuDosen()
                 break;
-
-
         }
     })
 }
@@ -477,7 +171,6 @@ function tambahDosen(next) {
                         daftarDosen(() => {
                             next()
                         })
-
                     })
             })
         })
@@ -491,8 +184,6 @@ function hapusDosen(next) {
                 return console.log('hapus data dosen gagal')
             console.log(`data dosen '${IDDOSEN}',telah dihapus`)
             next()
-
-
         })
     })
 }
@@ -543,8 +234,6 @@ silahkan pilih opsi di bawah ini :
                 console.log('opsi yang dimasukkan salah')
                 menuMatakuliah()
                 break;
-
-
         }
     })
 }
@@ -621,8 +310,6 @@ function hapusMatakuliah(next) {
                 return console.log('hapus data matakuliah gagal')
             console.log(`data matakuliah '${IDMATAKULIAH}',telah dihapus`)
             next()
-
-
         })
     })
 }
@@ -680,12 +367,9 @@ silahkan pilih opsi di bawah ini :
                 console.log('opsi yang dimasukkan salah')
                 menuMengikuti()
                 break;
-
-
         }
     })
 }
-
 
 function daftarMengikuti(next) {
 
@@ -773,7 +457,6 @@ function tambahMengikuti(next) {
                 })
             })
         })
-
     })
 }
 
@@ -784,8 +467,6 @@ function hapusMengikuti(next) {
                 return console.log('hapus data mengikuti gagal')
             console.log(`data mengikuti dengan nom'${nom}',telah dihapus`)
             next()
-
-
         })
     })
 }
@@ -842,4 +523,4 @@ function updateNilai(next) {
     })
 }
 
-welcome()
+// UserController.welcome()
