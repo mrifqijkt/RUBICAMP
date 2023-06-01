@@ -2,8 +2,7 @@ import { line } from "../views/utill.js"
 import UserController from "../controllers/user.js"
 import { rl } from "../views/utill.js"
 import JurusanModel from "../models/jurusan.js"
-import Table from "cli-table"
-
+import JurusanView from "../views/jurusan.js"
 
 export default class JurusanController {
 
@@ -56,26 +55,56 @@ export default class JurusanController {
     }
 
     static daftarJurusan(next) {
-
         JurusanModel.daftar((rows) => {
-
-            let table = new Table({
-                head: ['IDJURUSAN', 'namajurusan'],
-                colWidths: [20, 20]
-            });
-            rows.forEach((jurusan) => {
-                table.push(
-                    [jurusan.IDJURUSAN, jurusan.namajurusan]
-                );
-            })
-            console.log(table.toString());
-
+           JurusanView.daftar(rows)
             next()
-
         })
-
     }
 
+    static cariJurusan(next) {
+        rl.question('masukan ID Jurusan :', (IDJURUSAN) => {
 
+            JurusanModel.cari(IDJURUSAN, (rows) => {
 
+                if (rows.length == 0) {
+                    console.log(`nama jurusan dengan ID Jurusan ${IDJURUSAN} tidak terdaftar`)
+
+                } else {
+                    console.log(`
+    detail nama jurusan dengan IDJURUSAN '${IDJURUSAN}' : 
+    ID Jurusan      : ${rows[0].IDJURUSAN}
+    Nama Jurusan    : ${rows[0].namajurusan}  `)
+
+                }
+                line()
+                next()
+            })
+        })
+    }
+
+    static tambahJurusan(next) {
+        console.log('lengkapi data di bawah ini :')
+        JurusanController.daftarJurusan(() => {
+            rl.question('ID Jurusan : ', IDJURUSAN => {
+                rl.question('Nama Jurusan ; ', namajurusan => {
+
+                    JurusanModel.tambah(IDJURUSAN, namajurusan, () => {
+
+                        JurusanController.daftarJurusan(() => {
+                            next()
+                        })
+                    })
+                })
+            })
+        })
+    }
+
+    static hapusJurusan(next) {
+        rl.question('Masukan ID Jurusan : ', IDJURUSAN => {
+
+            JurusanModel.hapus(IDJURUSAN, () => {
+                next()
+            })
+        })
+    }
 }

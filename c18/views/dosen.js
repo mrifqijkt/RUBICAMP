@@ -1,22 +1,20 @@
 import Table from "cli-table";
 
-export default class JurusanView {
+export default class DosenVIew {
 
     static line() {
         console.log('====================================================')
     };
-
     static daftar(rows){
         let table = new Table({
-            head: ['IDJURUSAN', 'namajurusan'],
+            head: ['IDDOSEN', 'namadosen'],
             colWidths: [20, 20]
         });
-        rows.forEach((jurusan) => {
+        rows.forEach((dosen) => {
             table.push(
-                [jurusan.IDJURUSAN, jurusan.namajurusan]
+                [dosen.IDDOSEN, dosen.namadosen]
             );
         })
         console.log(table.toString());
-
     }
 }

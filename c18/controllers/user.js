@@ -2,6 +2,10 @@ import { rl, login, line } from "../views/utill.js";
 import User from '../controllers/user.js';
 import MahasiswaController from "./mahasiswa.js";
 import UserModels from "../models/user.js";
+import JurusanController from "./jurusan.js";
+import DosenController from "./dosen.js";
+import MatakuliahController from "./matakuliah.js";
+import MengikutiController from "./mengikuti.js";
 
 
 export default class UserController {
@@ -57,19 +61,19 @@ export default class UserController {
                     break;
     
                 case '2':
-                    menuJurusan()
+                    JurusanController.menuJurusan()
                     break;
     
                 case '3':
-                    menuDosen()
+                    DosenController.menuDosen()
                     break;
     
                 case '4':
-                    menuMatakuliah()
+                    MatakuliahController.menuMatakuliah()
                     break;
     
                 case '5':
-                    menuMengikuti()
+                    MengikutiController.menuMengikuti()
                     break;
     
                 case '6':

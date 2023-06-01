@@ -2,13 +2,10 @@ import { line } from "../views/utill.js"
 import UserController from "../controllers/user.js"
 import { rl } from "../views/utill.js"
 import MahasiswaModels from "../models/mahasiswa.js"
-import Table from "cli-table"
-import JurusanModel from "../models/jurusan.js"
-// import JurusanModel from "../models/jurusan.js"
-
+import JurusanController from "./jurusan.js"
+import MahasiswaView from "../views/mahasiswa.js"
 
 export default class MahasiswaController {
-
 
     static menuMahasiswa() {
         console.log(`
@@ -54,28 +51,14 @@ export default class MahasiswaController {
                     console.log('opsi yang dimasukkan salah')
                     MahasiswaController.menuMahasiswa()
                     break;
-
             }
         })
     }
 
     static daftarMahasiswa(next) {
-
         MahasiswaModels.daftar((rows) => {
-
-            let table = new Table({
-                head: ['nim', 'nama', 'tanggalLahir', 'alamat', 'IDJURUSAN', 'namajurusan'],
-
-            });
-            rows.forEach((mahasiswa) => {
-                table.push(
-                    [mahasiswa.nim, mahasiswa.nama, mahasiswa.tanggalLahir, mahasiswa.alamat, mahasiswa.IDJURUSAN, mahasiswa.namajurusan]
-                );
-            })
-            console.log(table.toString());
-
+           MahasiswaView.daftar(rows);         
             next()
-
         })
     }
 
@@ -104,25 +87,23 @@ export default class MahasiswaController {
 
     static tambahMahasiswa(next) {
         console.log('lengkapi data di bawah ini :')
-        MahasiswaModels.daftar(() => {
+        MahasiswaController.daftarMahasiswa(() => {
             rl.question('NIM : ', nim => {
                 rl.question('Nama : ', nama => {
                     rl.question('Tanggal Lahir : ', tanggalLahir => {
                         rl.question('Alamat : ', alamat => {
-                            JurusanModel.daftar(() => {
+                            JurusanController.daftarJurusan(() => {
                                 rl.question('IDJURUSAN ; ', IDJURUSAN => {
-
+                              
                                     MahasiswaModels.tambah(nim, nama, tanggalLahir, alamat, IDJURUSAN, () => {
 
-
-                                        MahasiswaModels.daftar(() => {
+                                        MahasiswaController.daftarMahasiswa(() => {
                                             next()
                                         })
                                     })
                                 })
                             })
                         })
-
                     })
                 })
             })
@@ -132,12 +113,9 @@ export default class MahasiswaController {
     static hapusMahasiswa(next) {
         rl.question('Masukan NIM mahasiswa : ', nim => {
 
-            Mahasiswa.hapus(nim, () => {
-
-
+            MahasiswaModels.hapus(nim, () => {
                 next()
             })
         })
     }
-
 }
